@@ -87,7 +87,7 @@ _ERROR_CATEGORY_LABELS = {
 }
 
 # категории НЕ алертим — это ошибки контента, не инфраструктуры
-_SILENT_CATEGORIES = {"private", "not_found", "geo_blocked", "live", "music_unsupported"}
+_SILENT_CATEGORIES = {"private", "not_found", "geo_blocked", "live", "music_unsupported", "bad_url"}
 
 # bot instance устанавливается из main.py через setup_fallback_alerts
 _bot_ref = None

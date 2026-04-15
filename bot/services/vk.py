@@ -177,6 +177,17 @@ def classify_error(exc: BaseException | str) -> str:
         return "cookies_expired"
     if "timeout" in msg or "timed out" in msg or "connection" in msg or "unreachable" in msg:
         return "network"
+    # Кривой URL (битый домен, невалидный idna, unsupported extractor) — сразу останавливаемся,
+    # нет смысла тянуть через proxy/WARP то, что yt-dlp даже распарсить не может.
+    if (
+        "label empty" in msg
+        or "label too long" in msg
+        or "idna" in msg
+        or "unsupported url" in msg
+        or "no suitable extractor" in msg
+        or "invalid url" in msg
+    ):
+        return "bad_url"
     return "unknown"
 
 
@@ -396,7 +407,7 @@ class VkDownloader:
                 last_err = e
                 cat = classify_error(e)
                 # контентные ошибки — не пытаемся fallback'ами, пробрасываем сразу
-                if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported"):
+                if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported", "bad_url"):
                     self._raise_categorized(e)
                 logger.warning("yt-dlp info [%s] упал: %s", name, e)
                 self._fire_source_failed(f"vk.ytdlp.{name}", e)
@@ -548,7 +559,7 @@ class VkDownloader:
                 except Exception as e:
                     last_err = e
                     cat = classify_error(e)
-                    if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported"):
+                    if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported", "bad_url"):
                         self._raise_categorized(e)
                     logger.warning("yt-dlp download [%s] упал: %s", name, e)
                     self._fire_source_failed(f"vk.ytdlp.{name}", e)
@@ -600,7 +611,7 @@ class VkDownloader:
                 except Exception as e:
                     last_err = e
                     cat = classify_error(e)
-                    if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported"):
+                    if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported", "bad_url"):
                         self._raise_categorized(e)
                     self._fire_source_failed(f"vk.ytdlp.doc.{name}", e)
 
@@ -690,7 +701,7 @@ class VkDownloader:
             except Exception as e:
                 last_err = e
                 cat = classify_error(e)
-                if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported"):
+                if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported", "bad_url"):
                     self._raise_categorized(e)
                 logger.warning("gallery-dl info [%s] упал: %s", name, e)
                 self._fire_source_failed(f"vk.gdl.{name}", e)
@@ -819,7 +830,7 @@ class VkDownloader:
             except Exception as e:
                 last_err = e
                 cat = classify_error(e)
-                if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported"):
+                if cat in ("private", "not_found", "geo_blocked", "live", "music_unsupported", "bad_url"):
                     # чистим out_dir и пробрасываем
                     self.cleanup_dir(out_dir)
                     self._raise_categorized(e)
@@ -898,7 +909,7 @@ class VkDownloader:
             raise LiveStreamError(str(exc)) from exc
         if cat == "private":
             raise PrivateContentError(str(exc)) from exc
-        if cat in ("not_found", "geo_blocked"):
+        if cat in ("not_found", "geo_blocked", "bad_url"):
             raise ContentUnavailableError(str(exc)) from exc
         if cat == "too_large":
             raise FileTooLargeError(str(exc)) from exc
