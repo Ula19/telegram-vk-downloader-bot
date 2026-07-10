@@ -159,7 +159,14 @@ def classify_error(exc: BaseException | str) -> str:
         or "только для авторизованных" in msg
     ):
         return "private"
-    if "not found" in msg or "removed" in msg or "удалено" in msg or "404" in msg or "video was deleted" in msg:
+    if (
+        "not found" in msg
+        or "removed" in msg
+        or "удалено" in msg
+        or "404" in msg
+        or "deleted" in msg              # "this video has been deleted", "was deleted"
+        or "no longer available" in msg
+    ):
         return "not_found"
     if "geo" in msg or "region" in msg or "country" in msg or "not available in your" in msg:
         return "geo_blocked"
@@ -175,12 +182,13 @@ def classify_error(exc: BaseException | str) -> str:
         return "cookies_expired"
     if "cookies" in msg:
         return "cookies_expired"
-    if "timeout" in msg or "timed out" in msg or "connection" in msg or "unreachable" in msg:
-        return "network"
-    # Кривой URL (битый домен, невалидный idna, unsupported extractor) — сразу останавливаемся,
-    # нет смысла тянуть через proxy/WARP то, что yt-dlp даже распарсить не может.
+    # Кривой/битый URL (юзер прислал ссылку вместе с мусором, невалидный idna,
+    # unsupported extractor) — проверяем ДО network: proxy/WARP это не лечат,
+    # нет смысла гонять по фолбэкам и алертить админа.
     if (
-        "label empty" in msg
+        "failed to parse" in msg
+        or "unable to parse" in msg
+        or "label empty" in msg
         or "label too long" in msg
         or "idna" in msg
         or "unsupported url" in msg
@@ -188,6 +196,8 @@ def classify_error(exc: BaseException | str) -> str:
         or "invalid url" in msg
     ):
         return "bad_url"
+    if "timeout" in msg or "timed out" in msg or "connection" in msg or "unreachable" in msg:
+        return "network"
     return "unknown"
 
 

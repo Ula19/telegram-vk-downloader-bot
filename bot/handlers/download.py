@@ -65,7 +65,7 @@ from bot.services.vk_extractor import (
     normalize_vk_url,
     resolve_short_link,
 )
-from bot.utils.helpers import format_duration, is_vk_url
+from bot.utils.helpers import extract_vk_url, format_duration, is_vk_url
 from bot.utils.split import split_video
 
 logger = logging.getLogger(__name__)
@@ -202,8 +202,11 @@ async def handle_vk_url(message: Message, state: FSMContext) -> None:
             await message.answer(t("download.not_vk", lang), parse_mode="HTML")
             return
 
+        # В тексте может быть ссылка + мусор (юзер вставил лог/конфиг со ссылкой) —
+        # берём именно VK-URL, иначе движок получит весь блок и упадёт "Failed to parse".
+        raw = extract_vk_url(text) or text
         # Короткие vk.cc / vk.link — раскрываем в полный URL до детекта типа.
-        resolved = await resolve_short_link(text)
+        resolved = await resolve_short_link(raw)
         url = normalize_vk_url(resolved)
         media_type = detect_vk_media_type(url)
 

@@ -12,12 +12,30 @@ _VK_HOSTS = re.compile(
 )
 _ANY_URL = re.compile(r"https?://\S+", re.IGNORECASE)
 
+# Захват именно VK-URL (до первого пробела) — юзер часто присылает ссылку
+# вперемешку с текстом/логом/конфигом. Без этого весь блок улетит в yt-dlp
+# и упадёт с "Failed to parse".
+_VK_URL_EXTRACT = re.compile(
+    r"https?://(?:[\w-]+\.)*(?:vk\.com|vk\.ru|vkvideo\.ru|vk\.video|vk\.cc|vk\.link)/\S*",
+    re.IGNORECASE,
+)
+
 
 def is_vk_url(text: str) -> bool:
     """Проверяет, похоже ли это на ссылку ВКонтакте/VK Видео (любой поддомен)."""
     if not text:
         return False
     return bool(_VK_HOSTS.search(text.strip()))
+
+
+def extract_vk_url(text: str) -> str | None:
+    """Вернуть первую VK-ссылку из текста (или None). Отсекает лишний текст
+    вокруг ссылки, чтобы в движок ушёл именно URL, а не весь message.text.
+    """
+    if not text:
+        return None
+    m = _VK_URL_EXTRACT.search(text.strip())
+    return m.group(0) if m else None
 
 
 def looks_like_url(text: str) -> bool:
