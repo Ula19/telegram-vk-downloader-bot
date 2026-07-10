@@ -240,7 +240,14 @@ async def handle_vk_url(message: Message, state: FSMContext) -> None:
         return
 
     if media_type == VkMediaType.STORY:
-        await _handle_photo_flow(message, url, lang, quality_key="story")
+        # VK-сторис нельзя вытащить ни yt-dlp (нет экстрактора), ни gallery-dl
+        # (принимает story-URL за screen name → 0 файлов). Нужен VK API + токен.
+        # Пока честно говорим, что не поддерживается, вместо ложного «видео удалено».
+        await message.answer(
+            t("error.story_unsupported", lang),
+            reply_markup=get_back_keyboard(lang),
+            parse_mode="HTML",
+        )
         return
 
     if media_type in (VkMediaType.ALBUM, VkMediaType.WALL_POST):

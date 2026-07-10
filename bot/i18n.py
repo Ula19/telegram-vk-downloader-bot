@@ -359,18 +359,35 @@ TRANSLATIONS = {
         "uz": f"{E['cross']} <b>Kontent o‘chirilgan</b>\n\nNashr endi mavjud emas.",
         "en": f"{E['cross']} <b>Content deleted</b>\n\nThe post is no longer available.",
     },
+    "error.story_unsupported": {
+        "ru": (
+            f"{E['cross']} <b>Сторис ВК не поддерживаются</b>\n\n"
+            "VK не даёт скачивать истории без входа в аккаунт. "
+            "Пришли ссылку на видео, клип, фото, альбом, пост или документ."
+        ),
+        "uz": (
+            f"{E['cross']} <b>VK hikoyalari qo‘llab-quvvatlanmaydi</b>\n\n"
+            "VK hikoyalarni hisobga kirmasdan yuklab olishga ruxsat bermaydi. "
+            "Video, klip, rasm, albom, post yoki hujjat havolasini yuboring."
+        ),
+        "en": (
+            f"{E['cross']} <b>VK Stories are not supported</b>\n\n"
+            "VK doesn't allow downloading stories without signing in. "
+            "Send a link to a video, clip, photo, album, post or document."
+        ),
+    },
     "error.unsupported_type": {
         "ru": (
             f"{E['cross']} <b>Тип ссылки не поддерживается</b>\n\n"
-            "Мы поддерживаем: видео, клипы, фото, альбомы, посты, сторис, документы."
+            "Мы поддерживаем: видео, клипы, фото, альбомы, посты, документы."
         ),
         "uz": (
             f"{E['cross']} <b>Havola turi qo‘llab-quvvatlanmaydi</b>\n\n"
-            "Biz qo‘llab-quvvatlaymiz: video, kliplar, rasmlar, albomlar, postlar, hikoyalar, hujjatlar."
+            "Biz qo‘llab-quvvatlaymiz: video, kliplar, rasmlar, albomlar, postlar, hujjatlar."
         ),
         "en": (
             f"{E['cross']} <b>Link type not supported</b>\n\n"
-            "We support: videos, clips, photos, albums, posts, stories, documents."
+            "We support: videos, clips, photos, albums, posts, documents."
         ),
     },
     "download.splitting": {
