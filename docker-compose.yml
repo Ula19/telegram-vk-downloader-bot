@@ -38,7 +38,7 @@ services:
       # Унифицированная раскладка всех ботов на сервере:
       # YouTube 8081 / Insta 8082 / TikTok 8091 / Twitter 8092 /
       # Facebook 8093 / Twitch 8094 / VK 8095
-      - "${BOT_API_PORT:-8095}:8081"
+      - "${BOT_API_PORT:-8111}:8081"
     volumes:
       - bot-api-data:/var/lib/telegram-bot-api
       - /tmp/vk_bot:/tmp/vk_bot
